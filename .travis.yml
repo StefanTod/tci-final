@@ -13,3 +13,12 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+# Run Code Coverage Scripts
+script:
+  - ./gradlew check
+  - ./gradlew jacocoTestReport
+
+# Link the reports to CodeCov
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
