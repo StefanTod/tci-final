@@ -1,4 +1,15 @@
 language: java
 
+# Setting JDK
 jdk:
   - oraclejdk8
+
+# Allow gradlew to be executed by Travis
+before_install:
+ - chmod +x gradlew
+
+# Caching dependencies
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
