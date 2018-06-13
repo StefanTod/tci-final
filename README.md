@@ -1,5 +1,7 @@
 # tci-final
 [![Build Status](https://travis-ci.org/StefanTod/tci-final.svg?branch=master)](https://travis-ci.org/StefanTod/tci-final)
+![Codecov](https://img.shields.io/codecov/c/github/StefanTod/tci-final.svg)
+
 [![forthebadge](https://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg)]()
 
 Testing and Continuous Integration Web Crawler/Scraper project.
