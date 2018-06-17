@@ -1,4 +1,3 @@
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;
@@ -241,11 +240,19 @@ public class AlgorithmTest {
                 };
     }
 
-    private Object[] provideResources(){
+    private Object[] provideResourcesUrls(){
         return new Object[]{
                 new Object[]{"Clean Code: A Handbook of Agile Software Craftsmanship", "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=102"},
                 new Object[]{"Forrest Gump", "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=201"},
                 new Object[]{"Elvis Forever", "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302"}
+        };
+    }
+
+    private Object[] provideResourcesSearch(){
+        return new Object[]{
+                new Object[]{"Clean Code: A Handbook of Agile Software Craftsmanship", 16},
+                new Object[]{"Forrest Gump", 14},
+                new Object[]{"Elvis Forever", 12}
         };
     }
 
@@ -286,7 +293,7 @@ public class AlgorithmTest {
     }
 
     @Test
-    @Parameters(method = "provideResources")
+    @Parameters(method = "provideResourcesUrls")
     public void testCrawlResource(String resourceName, String expectedUrl) throws IOException, JSoupException, SearchException {
         String actualUrl = algorithm.crawlResource(baseUrl, resourceName);
         assertThat(actualUrl, is(equalTo(expectedUrl)));
@@ -305,4 +312,12 @@ public class AlgorithmTest {
         algorithm.crawlResource(baseUrl, "No resource");
     }
 
+    @Test
+    @Parameters(method = "provideResourcesSearch")
+    public void testCrawlResourcesDepth(String resourceName, int expectedSearchDepth)
+            throws JSoupException, SearchException, IOException {
+        algorithm.crawlResource(baseUrl, resourceName);
+        int actualSearchDepth = algorithm.getSearchDepth();
+        assertThat(actualSearchDepth, is(equalTo(expectedSearchDepth)));
+    }
 }

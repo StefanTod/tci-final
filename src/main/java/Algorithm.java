@@ -42,15 +42,6 @@ public class Algorithm {
     }
 
     /**
-     * Set search depth.
-     *
-     * @param searchDepth: search depth
-     */
-    public void setSearchDepth(int searchDepth) {
-        this.searchDepth = searchDepth;
-    }
-
-    /**
      * Crawl entire website.
      *
      * @param url: url to crawl for
@@ -101,30 +92,42 @@ public class Algorithm {
      */
     public String crawlResource(String url, String resourceName) throws IOException, JSoupException, SearchException {
 
-        Stack<String> urlStack = new Stack<String>();
+        Stack<List<Object>> urlStack = new Stack<List<Object>>();
         List<String> discoveredUrls = new ArrayList<String>();
-        urlStack.push(url);
+        this.searchDepth = 0;
+        List<Object> initialStackEntry = new ArrayList<Object>();
+        initialStackEntry.add(url);
+        initialStackEntry.add(this.searchDepth);
+        urlStack.push(initialStackEntry);
         while (!urlStack.empty()) {
-            String stackUrl = urlStack.pop();
-            if (!discoveredUrls.contains(stackUrl)) {
-                discoveredUrls.add(stackUrl);
+            List<Object> stackEntry = urlStack.pop();
+            if (!discoveredUrls.contains(stackEntry.get(0))) {
+                discoveredUrls.add((String) stackEntry.get(0));
                 try {
-                    Connection connection = Jsoup.connect(stackUrl).userAgent(USER_AGENT);
+                    Connection connection = Jsoup.connect((String) stackEntry.get(0)).userAgent(USER_AGENT);
                     org.jsoup.nodes.Document htmlDocument = connection.get();
                     if(!connection.response().contentType().contains("text/html"))
                     {
                         throw new JSoupException("**Failure** Retrieved something other than HTML");
                     }
-                    String bodyText = htmlDocument.body().text();
-                    if (bodyText.toLowerCase().contains(resourceName.toLowerCase())) {
-                        return stackUrl;
+                    Elements headers = htmlDocument.select("title");
+                    for (Element head : headers){
+                        if (head.text().equals(resourceName)){
+                            this.searchDepth = (int) stackEntry.get(1);
+                            return (String) stackEntry.get(0);
+                        }
                     }
+                    int searchDepth = (int) stackEntry.get(1);
+                    searchDepth++;
                     Elements linksOnPage = htmlDocument.select("a[href]");
                     for (Element link : linksOnPage) {
                         String nextUrl = link.absUrl("href");
                         if (!nextUrl.contains("facebook") && !nextUrl.contains("twitter")) {
                             if (!discoveredUrls.contains(nextUrl)) {
-                                urlStack.push(nextUrl);
+                                List<Object> newStackEntry = new ArrayList<Object>();
+                                newStackEntry.add(nextUrl);
+                                newStackEntry.add(searchDepth);
+                                urlStack.push(newStackEntry);
                             }
                         }
                     }
