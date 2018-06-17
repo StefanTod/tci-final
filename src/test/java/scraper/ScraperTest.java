@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import static java.util.function.Predicate.isEqual;
 import static org.mockito.ArgumentMatchers.isNotNull;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.hamcrest.CoreMatchers.*;
 
@@ -49,8 +50,8 @@ public class ScraperTest {
         String nameMusic = "No Fences";
 
         bookModel = (BookModel) scraper.findSingleItem(typeBook, nameBook, urlsToSearchIn);
-        movieModel = (MovieModel) scraper.findSingleItem(nameMovie, nameMovie, urlsToSearchIn);
-        musicModel = (MusicModel) scraper.findSingleItem(typeBook, nameBook, urlsToSearchIn);
+        movieModel = (MovieModel) scraper.findSingleItem(typeMovie, nameMovie, urlsToSearchIn);
+        musicModel = (MusicModel) scraper.findSingleItem(typeMusic, nameBook, urlsToSearchIn);
 
         Assert.assertThat(bookModel, isNotNull());
         Assert.assertThat(bookModel.getName(), is(nameBook));
@@ -60,6 +61,21 @@ public class ScraperTest {
 
         Assert.assertThat(musicModel, isNotNull());
         Assert.assertThat(musicModel.getName(), is(nameMusic));
+    }
+
+    @Test
+    public void testScraperFindingSingleMovie(){
+        String nameToSearchFor = "Office Space";
+        String url1 = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=101";
+        String url2 = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=202";
+
+        MovieModel movieFromFirstUrl= scraper.findSingleMovie(nameToSearchFor, url1);
+        MovieModel movieFromSecondUrl= scraper.findSingleMovie(nameToSearchFor, url2);
+
+        Assert.assertThat(movieFromFirstUrl, isNull());
+//        Assert.assertThat(movieFromFirstUrl.getName(), isNot(nameToSearchFor));
+        Assert.assertThat(movieFromSecondUrl, isNotNull());
+        Assert.assertThat(movieFromSecondUrl.getName(), is(nameToSearchFor));
     }
 
     private void urlSeederHelper(){

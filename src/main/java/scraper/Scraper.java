@@ -14,6 +14,9 @@ import java.util.ArrayList;
 
 public class Scraper {
 
+    public Scraper() {
+    }
+
     public Item findSingleItem(String typeToSearchFor, String nameToSearchFor, ArrayList<String> urlsToSearchIn) throws IOException {
         for (String url: urlsToSearchIn) {
             if(url.contains("details")){
@@ -41,5 +44,25 @@ public class Scraper {
         }
         return null;
     }
+
+    public MusicModel findSingleMusic(String nameToSearchFor, String url) throws IOException {
+        Document document = Jsoup.connect(url).get();
+        Element title = document.select("h1").first();
+        Elements tableRows = document.select("tr");
+        if(title.toString().equals(nameToSearchFor)){
+            MusicModel foundMovie = extractModelFromTable(tableRows);
+            return foundMovie;
+        }
+        return null;
+    }
+
+    public MovieModel findSingleMovie(String nameToSearchFor, String url) {
+        return null;
+    }
+
+    public BookModel findSingleBook(String nameToSearchFor, String url) {
+        return null;
+    }
+
 
 }
