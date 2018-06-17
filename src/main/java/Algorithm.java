@@ -68,6 +68,9 @@ public class Algorithm {
      */
     public int crawlWebsite(String url, int depth) throws JSoupException, IOException {
         urls.add(url);
+        if (depth != 0){
+            throw new IllegalArgumentException("Depth must be 0");
+        }
         depth++;
         int maximumDepth = depth;
         try{

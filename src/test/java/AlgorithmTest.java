@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 public class AlgorithmTest {
 
     Algorithm algorithm;
+    String baseUrl;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -30,6 +31,7 @@ public class AlgorithmTest {
     @Before
     public void setUp() throws Exception {
         algorithm = new Algorithm();
+        baseUrl = "http://i371829.hera.fhict.nl/tci-test-site/index.php";
     }
 
     private Object[] provideCheckUrls(){
@@ -266,5 +268,12 @@ public class AlgorithmTest {
     public void testCrawlSetsDepth(String baseUrl, int expectedDepth) throws IOException, JSoupException {
         int actualDepth = algorithm.crawlWebsite(baseUrl, 0);
         assertThat(actualDepth, is(equalTo(expectedDepth)));
+    }
+
+    @Test
+    @Parameters({"-1", "-1245"})
+    public void testCrawlSetsDepthException(int wrongDepth) throws IOException, JSoupException {
+        exception.expect(IllegalArgumentException.class);
+        algorithm.crawlWebsite(baseUrl, wrongDepth);
     }
 }
