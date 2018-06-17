@@ -1,3 +1,5 @@
+package models;
+
 public class MusicModel implements Music {
 
     String genre;

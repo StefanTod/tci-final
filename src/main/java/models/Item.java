@@ -1,3 +1,5 @@
+package models;
+
 public interface Item {
     /**
      * Get genre of the item.
