@@ -1,5 +1,10 @@
+package api;
+
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class BookModel implements Book {
     String genre;
     String format;
