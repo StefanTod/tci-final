@@ -57,11 +57,15 @@ public class Algorithm {
      * @throws JSoupException
      * @throws IOException
      */
-    public void crawlWebsite(String url) throws IOException {
+    public void crawlWebsite(String url) throws JSoupException, IOException {
         urls.add(url);
         try{
             Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
             org.jsoup.nodes.Document htmlDocument = connection.get();
+            if(!connection.response().contentType().contains("text/html"))
+            {
+                throw new JSoupException("**Failure** Retrieved something other than HTML");
+            }
             Elements linksOnPage = htmlDocument.select("a[href]");
             for(Element link : linksOnPage)
             {

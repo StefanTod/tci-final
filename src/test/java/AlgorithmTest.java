@@ -1,3 +1,4 @@
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;
@@ -22,6 +23,9 @@ import static org.junit.Assert.*;
 public class AlgorithmTest {
 
     Algorithm algorithm;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -224,4 +228,10 @@ public class AlgorithmTest {
         }
     }
 
+    @Test
+    public void testCrawlWebsiteException() throws IOException, JSoupException {
+        String baseUrl = "http://i341887.hera.fhict.nl/index.php";
+        exception.expect(JSoupException.class);
+        algorithm.crawlWebsite(baseUrl);
+    }
 }
