@@ -1,6 +1,6 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -98,5 +98,38 @@ public class Algorithm {
         catch (IOException ioe){
             throw new IOException("Something went wrong with the connection");
         }
+    }
+
+    public String crawlResource(String url, String resourceName) throws IOException{
+
+        Stack<String> urlStack = new Stack<String>();
+        List<String> discoveredUrls = new ArrayList<String>();
+        urlStack.push(url);
+        while (!urlStack.empty()) {
+            String stackUrl = urlStack.pop();
+            if (!discoveredUrls.contains(stackUrl)) {
+                discoveredUrls.add(stackUrl);
+                try {
+                    Connection connection = Jsoup.connect(stackUrl).userAgent(USER_AGENT);
+                    org.jsoup.nodes.Document htmlDocument = connection.get();
+                    String bodyText = htmlDocument.body().text();
+                    if (bodyText.toLowerCase().contains(resourceName.toLowerCase())) {
+                        return stackUrl;
+                    }
+                    Elements linksOnPage = htmlDocument.select("a[href]");
+                    for (Element link : linksOnPage) {
+                        String nextUrl = link.absUrl("href");
+                        if (!nextUrl.contains("facebook") && !nextUrl.contains("twitter")) {
+                            if (!discoveredUrls.contains(nextUrl)) {
+                                urlStack.push(nextUrl);
+                            }
+                        }
+                    }
+                } catch (IOException ioe) {
+                    throw new IOException("Something went wrong with the connection");
+                }
+            }
+        }
+        return "";
     }
 }

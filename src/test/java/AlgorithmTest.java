@@ -241,6 +241,14 @@ public class AlgorithmTest {
                 };
     }
 
+    private Object[] provideResources(){
+        return new Object[]{
+                new Object[]{"Clean Code: A Handbook of Agile Software Craftsmanship", "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=102"},
+                new Object[]{"Forrest Gump", "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=201"},
+                new Object[]{"Elvis Forever", "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302"}
+        };
+    }
+
     @Test
     @Parameters(method = "provideCheckUrls")
     public void testCrawlWebsite(
@@ -276,4 +284,12 @@ public class AlgorithmTest {
         exception.expect(IllegalArgumentException.class);
         algorithm.crawlWebsite(baseUrl, wrongDepth);
     }
+
+    @Test
+    @Parameters(method = "provideResources")
+    public void testCrawlResource(String resourceName, String expectedUrl) throws IOException {
+        String actualUrl = algorithm.crawlResource(baseUrl, resourceName);
+        assertThat(actualUrl, is(equalTo(expectedUrl)));
+    }
+
 }
