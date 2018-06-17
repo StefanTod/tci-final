@@ -51,15 +51,6 @@ public class Algorithm {
     }
 
     /**
-     * Get website depth.
-     *
-     * @return int: website depth
-     */
-    public int getWebsiteDepth() {
-        return websiteDepth;
-    }
-
-    /**
      * Crawl entire website.
      *
      * @param url: url to crawl for
@@ -108,7 +99,7 @@ public class Algorithm {
      * @return String: url of the resource
      * @throws IOException
      */
-    public String crawlResource(String url, String resourceName) throws IOException, JSoupException{
+    public String crawlResource(String url, String resourceName) throws IOException, JSoupException, SearchException {
 
         Stack<String> urlStack = new Stack<String>();
         List<String> discoveredUrls = new ArrayList<String>();
@@ -142,6 +133,6 @@ public class Algorithm {
                 }
             }
         }
-        return "";
+        throw new SearchException("Resource not found");
     }
 }
