@@ -100,7 +100,15 @@ public class Algorithm {
         }
     }
 
-    public String crawlResource(String url, String resourceName) throws IOException{
+    /**
+     * Crawl website for resource.
+     *
+     * @param url
+     * @param resourceName
+     * @return String: url of the resource
+     * @throws IOException
+     */
+    public String crawlResource(String url, String resourceName) throws IOException, JSoupException{
 
         Stack<String> urlStack = new Stack<String>();
         List<String> discoveredUrls = new ArrayList<String>();
@@ -112,6 +120,10 @@ public class Algorithm {
                 try {
                     Connection connection = Jsoup.connect(stackUrl).userAgent(USER_AGENT);
                     org.jsoup.nodes.Document htmlDocument = connection.get();
+                    if(!connection.response().contentType().contains("text/html"))
+                    {
+                        throw new JSoupException("**Failure** Retrieved something other than HTML");
+                    }
                     String bodyText = htmlDocument.body().text();
                     if (bodyText.toLowerCase().contains(resourceName.toLowerCase())) {
                         return stackUrl;

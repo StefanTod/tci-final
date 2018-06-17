@@ -287,9 +287,16 @@ public class AlgorithmTest {
 
     @Test
     @Parameters(method = "provideResources")
-    public void testCrawlResource(String resourceName, String expectedUrl) throws IOException {
+    public void testCrawlResource(String resourceName, String expectedUrl) throws IOException, JSoupException {
         String actualUrl = algorithm.crawlResource(baseUrl, resourceName);
         assertThat(actualUrl, is(equalTo(expectedUrl)));
+    }
+
+    @Test
+    public void testCrawlResourceJSoupException() throws IOException, JSoupException {
+        String baseUrl = "http://i341887.hera.fhict.nl/index.php";
+        exception.expect(JSoupException.class);
+        algorithm.crawlResource(baseUrl, "Some resource");
     }
 
 }
