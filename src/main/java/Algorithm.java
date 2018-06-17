@@ -51,14 +51,25 @@ public class Algorithm {
     }
 
     /**
+     * Get website depth.
+     *
+     * @return int: website depth
+     */
+    public int getWebsiteDepth() {
+        return websiteDepth;
+    }
+
+    /**
      * Crawl entire website.
      *
      * @param url: url to crawl for
      * @throws JSoupException
      * @throws IOException
      */
-    public void crawlWebsite(String url) throws JSoupException, IOException {
+    public int crawlWebsite(String url, int depth) throws JSoupException, IOException {
         urls.add(url);
+        depth++;
+        int maximumDepth = depth;
         try{
             Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
             org.jsoup.nodes.Document htmlDocument = connection.get();
@@ -72,10 +83,14 @@ public class Algorithm {
                 String nextUrl = link.absUrl("href");
                 if (!nextUrl.contains("facebook") && !nextUrl.contains("twitter")){
                     if (!urls.contains(nextUrl)){
-                        this.crawlWebsite(nextUrl);
+                        int subTreeDepth = this.crawlWebsite(nextUrl, depth);
+                        if (subTreeDepth > maximumDepth){
+                            maximumDepth = subTreeDepth;
+                        }
                     }
                 }
             }
+            return maximumDepth;
         }
         catch (IOException ioe){
             throw new IOException("Something went wrong with the connection");

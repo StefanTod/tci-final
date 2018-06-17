@@ -32,7 +32,7 @@ public class AlgorithmTest {
         algorithm = new Algorithm();
     }
 
-    private Object[] provideUrls(){
+    private Object[] provideCheckUrls(){
         return new Object[]{
                 new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/index.php",
                         "http://i371829.hera.fhict.nl/tci-test-site/index.php",
@@ -213,13 +213,39 @@ public class AlgorithmTest {
         };
     }
 
+    private Object[] provideUrlsDepth() {
+        return new Object[]{
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/index.php", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/catalog.php?cat=books", 11},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/catalog.php?cat=movies", 11},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/catalog.php?cat=music", 11},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/catalog.php?cat=Books", 10},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/catalog.php?cat=Movies", 10},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/catalog.php?cat=Music", 9},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/suggest.php", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=101", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=102", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=103", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=104", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=201", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=202", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=203", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=204", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=301", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=303", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/details.php?id=304", 12},
+                new Object[]{"http://i371829.hera.fhict.nl/tci-test-site/catalog.php", 11}
+                };
+    }
+
     @Test
-    @Parameters(method = "provideUrls")
+    @Parameters(method = "provideCheckUrls")
     public void testCrawlWebsite(
             String baseUrl,
             String[] expectedOutput
     ) throws IOException, JSoupException {
-        algorithm.crawlWebsite(baseUrl);
+        algorithm.crawlWebsite(baseUrl, 0);
         List<String> actualOutput = algorithm.getAllUrls();
         List<String> expectedOutputList = Arrays.asList(expectedOutput);
         assertThat(actualOutput.size(), is(equalTo(expectedOutputList.size())));
@@ -232,6 +258,13 @@ public class AlgorithmTest {
     public void testCrawlWebsiteException() throws IOException, JSoupException {
         String baseUrl = "http://i341887.hera.fhict.nl/index.php";
         exception.expect(JSoupException.class);
-        algorithm.crawlWebsite(baseUrl);
+        algorithm.crawlWebsite(baseUrl, 0);
+    }
+
+    @Test
+    @Parameters(method = "provideUrlsDepth")
+    public void testCrawlSetsDepth(String baseUrl, int expectedDepth) throws IOException, JSoupException {
+        int actualDepth = algorithm.crawlWebsite(baseUrl, 0);
+        assertThat(actualDepth, is(equalTo(expectedDepth)));
     }
 }
