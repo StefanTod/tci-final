@@ -1,12 +1,15 @@
+package models;
+
 import java.util.List;
 
 public class MovieModel implements Movie {
-    String genre;
-    String format;
-    int year;
-    String director;
-    List<String> writers;
-    List<String> stars;
+    private String genre;
+    private String format;
+    private int year;
+    private String director;
+    private List<String> writers;
+    private List<String> stars;
+    private String name;
 
     public MovieModel(String genre, String format, int year, String director, List<String> writers, List<String> stars){
         this.genre = genre;
@@ -76,4 +79,10 @@ public class MovieModel implements Movie {
     public int getYear() {
         return this.year;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() { return this.name; }
 }

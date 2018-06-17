@@ -1,9 +1,12 @@
-public class MusicModel implements Music {
+package models;
 
-    String genre;
-    String format;
-    int year;
-    String artist;
+public class MusicModel implements Music {
+    private String genre;
+    private String format;
+    private String artist;
+    private String name;
+    private int year;
+
     public MusicModel(String genre, String format, int year, String artist){
         this.genre = genre;
         this.format = format;
@@ -42,4 +45,10 @@ public class MusicModel implements Music {
     public int getYear() {
         return this.year;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() { return this.name; }
 }

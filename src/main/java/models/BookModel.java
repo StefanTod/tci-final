@@ -1,12 +1,15 @@
+package models;
+
 import java.util.List;
 
 public class BookModel implements Book {
-    String genre;
-    String format;
-    int year;
-    List<String> authors;
-    String publisher;
-    String isbn;
+    private String genre;
+    private String format;
+    private String publisher;
+    private String isbn;
+    private String name;
+    private List<String> authors;
+    private int year;
 
     public BookModel(String genre, String format, int year, List<String> authors, String publisher, String isbn){
         this.genre = genre;
@@ -64,4 +67,10 @@ public class BookModel implements Book {
     public int getYear() {
         return this.year;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() { return this.name; }
 }

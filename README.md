@@ -15,7 +15,7 @@ The WCA is required to have three main functionalities:
 
           ◦ Genre, Format, Year, Director, Writers, Stars
 
-      • Music
+      • models.Music
 
           ◦ Genre, Format, Year, Artist
 
