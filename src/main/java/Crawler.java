@@ -24,16 +24,19 @@ public class Crawler {
             throw new IllegalArgumentException("The name of the item that is being looked for cannot be an empty string.");
         }
 
-        if(baseUrl.length() < 1){
+        if (baseUrl.length() < 1) {
             throw new IllegalArgumentException("The base URL that is going to be crawled cannot be an empty string.");
         }
 
         return scraper.findSingleItem(itemType, itemName, (ArrayList) triggerUrlsRetrieval(baseUrl));
     }
 
-    public List<Item> findAllItems(String baseUrl){
-        throw new IllegalArgumentException("baseUrl parameter cannot be an empty string.");
-        }
+    public List<Item> findAllItems(String baseUrl) {
+        if (baseUrl.length() < 1)
+            throw new IllegalArgumentException("baseUrl parameter cannot be an empty string.");
+
+        return null;
+    }
 
     public List<String> triggerUrlsRetrieval(String baseUrl) {
         algorithm.crawlWebsite(baseUrl, 0);
