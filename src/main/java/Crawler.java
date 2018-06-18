@@ -1,5 +1,4 @@
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,11 +37,6 @@ public class Crawler {
         return scraper.findAllItems((ArrayList)triggerUrlsRetrieval(baseUrl));
     }
 
-    public List<String> triggerUrlsRetrieval(String baseUrl) {
-        algorithm.crawlWebsite(baseUrl, 0);
-        return new ArrayList<String>();
-    }
-
     public Algorithm getAlgorithm() {
         return algorithm;
     }
@@ -67,4 +61,14 @@ public class Crawler {
         this.allUrls = allUrls;
     }
 
+    /**
+     * Get website's urls.
+     *
+     * @return List<String>: list of urls
+     */
+    public List<String> triggerUrlsRetrieval(String baseUrl) throws IOException, JSoupException {
+        algorithm.crawlWebsite(baseUrl, 0);
+        allUrls = algorithm.getAllUrls();
+        return this.allUrls;
+    }
 }

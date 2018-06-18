@@ -1,3 +1,5 @@
+package models;
+
 public interface Music extends Item{
     /**
      * Get music artist.

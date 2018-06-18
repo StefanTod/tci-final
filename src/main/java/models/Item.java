@@ -1,3 +1,5 @@
+package models;
+
 public interface Item {
     /**
      * Get genre of the item.
@@ -19,4 +21,11 @@ public interface Item {
      * @return int: year
      */
     public int getYear();
+
+    /**
+     * Get the name of the item.
+     *
+     * @return String: name
+     */
+    public String getName();
 }
