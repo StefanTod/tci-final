@@ -10,7 +10,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Scraper {
 
@@ -55,6 +57,26 @@ public class Scraper {
         return null;
     }
 
+    public MovieModel findSingleMovie(String nameToSearchFor, String url) throws IOException {
+        Document document = Jsoup.connect(url).get();
+        String title = document.select("h1").get(1).text();
+        Elements tableRows = document.select("tr");
+        if(title.equals(nameToSearchFor)){
+            return extractMovieModelFromTable(tableRows, title);
+        }
+        return null;
+    }
+
+    public BookModel findSingleBook(String nameToSearchFor, String url) throws IOException {
+        Document document = Jsoup.connect(url).get();
+        String title = document.select("h1").get(1).text();
+        Elements tableRows = document.select("tr");
+        if(title.equals(nameToSearchFor)){
+            return extractBookModelFromTable(tableRows, title);
+        }
+        return null;
+    }
+
     public MusicModel extractMusicModelFromTable(Elements tableRows,String name) {
         String genre = "", format = "", artist = "";
         int year = 0;
@@ -77,13 +99,68 @@ public class Scraper {
         return new MusicModel(name, genre, format, year, artist);
     }
 
-    public MovieModel findSingleMovie(String nameToSearchFor, String url) {
-        return null;
+    public MovieModel extractMovieModelFromTable(Elements tableRows, String name) {
+        String genre = "", format = "", director = "";
+        ArrayList<String> writers = new ArrayList<>();
+        ArrayList<String> stars = new ArrayList<>();
+        int year = 0;
+        for(int i = 0; i < tableRows.size(); i++){
+            switch(i){
+                case 1:
+                    genre = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+                case 2:
+                    format = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+                case 3:
+                    year = Integer.parseInt(tableRows.get(i).select("td").text().toLowerCase());
+                    break;
+                case 4:
+                    director = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+                case 5:
+                    String rawWriters = tableRows.get(i).select("td").toString().toLowerCase();
+                    writers.addAll(Arrays.asList(trimmedStrings(rawWriters)));
+                    break;
+                case 6:
+                    String rawStars = tableRows.get(i).select("td").toString().toLowerCase();
+                    stars.addAll(Arrays.asList(trimmedStrings(rawStars)));
+                    break;
+            }
+        }
+        return new MovieModel(name, genre, format, year, director, writers, stars);
     }
 
-    public BookModel findSingleBook(String nameToSearchFor, String url) {
-        return null;
+    public BookModel extractBookModelFromTable(Elements tableRows, String name) {
+        String genre = "", format = "", publisher = "", isbn = "";
+        ArrayList<String> authors = new ArrayList<>();
+        int year = 0;
+        for(int i = 0; i < tableRows.size(); i++){
+            switch(i){
+                case 1:
+                    genre = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+                case 2:
+                    format = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+                case 3:
+                    year = Integer.parseInt(tableRows.get(i).select("td").text().toLowerCase());
+                    break;
+                case 4:
+                    String rawAuthors = tableRows.get(i).select("td").toString().toLowerCase();
+                    authors.addAll(Arrays.asList(trimmedStrings(rawAuthors)));
+                case 5:
+                    publisher = tableRows.get(i).select("td").text().toLowerCase();
+                    break;
+                case 6:
+                    isbn = tableRows.get(i).select("td").text().toLowerCase();
+                    break;
+            }
+        }
+        return new BookModel(name, genre, format, year, authors, publisher, isbn);
     }
 
-
+    private String[] trimmedStrings(String rawString){
+        return rawString.trim().split("\\s*,\\s*");
+    }
 }
