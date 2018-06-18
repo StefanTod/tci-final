@@ -31,7 +31,7 @@ public class CrawlerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void ifAnUnexistingTypeOfMediaIsPutInThrowAnException() {
+    public void ifAnInexistantTypeOfMediaIsPutInAsArgumentOfFindSingleItemMethodThrowAnExceptionTest() {
         String invalidItemType = "invalidItemType";
 
         try {
@@ -60,7 +60,7 @@ public class CrawlerTest {
 
     @Test
     @Parameters(method = "getAllLegitItemTypes")
-    public void ifAnyOfTheSupportedTypesOfMediaAreRequestedDontThrowAnException(String validItemType) {
+    public void ifTheInputTypePassedToTheFindSingleItemMethodIsSupportedDontThrowAnExceptionTest(String validItemType) {
         try {
             crawler.findSingleItem(validItemType, properItemName, baseUrl);
         } catch (IllegalArgumentException e) {
@@ -85,7 +85,7 @@ public class CrawlerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void ifAnEmptyStringIsGivenAsURLThrowExceptionTest() {
+    public void ifAnEmptyStringIsGivenAsURLArgumentForFindSingleItemMethodThrowExceptionTest() {
         try {
             crawler.findSingleItem(properItemType, properItemName, "");
         } catch (IllegalArgumentException e) {
@@ -125,7 +125,7 @@ public class CrawlerTest {
     }
 
     @Test
-    public void makeSureTheIteratingMethodOfTheScraperIsCalled() throws IOException {
+    public void makeSureTheMethodOfTheScraperThatLooksForASingleItemIsCalledWhenTheFindSingleItemOfTheScraperIsCalled() throws IOException {
         Scraper scr = mock(Scraper.class);
 
         crawler.setScraper(scr);
