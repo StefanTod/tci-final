@@ -11,7 +11,8 @@ public class MovieModel implements Movie {
     private List<String> stars;
     private String name;
 
-    public MovieModel(String genre, String format, int year, String director, List<String> writers, List<String> stars){
+    public MovieModel(String name, String genre, String format, int year, String director, List<String> writers, List<String> stars){
+        this.name = name;
         this.genre = genre;
         this.format = format;
         this.year = year;

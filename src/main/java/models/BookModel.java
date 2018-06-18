@@ -11,7 +11,8 @@ public class BookModel implements Book {
     private List<String> authors;
     private int year;
 
-    public BookModel(String genre, String format, int year, List<String> authors, String publisher, String isbn){
+    public BookModel(String name, String genre, String format, int year, List<String> authors, String publisher, String isbn){
+        this.name = name;
         this.genre = genre;
         this.format = format;
         this.year = year;

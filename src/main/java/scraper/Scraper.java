@@ -47,13 +47,34 @@ public class Scraper {
 
     public MusicModel findSingleMusic(String nameToSearchFor, String url) throws IOException {
         Document document = Jsoup.connect(url).get();
-        Element title = document.select("h1").first();
+        String title = document.select("h1").get(1).text();
         Elements tableRows = document.select("tr");
-        if(title.toString().equals(nameToSearchFor)){
-            MusicModel foundMovie = extractModelFromTable(tableRows);
-            return foundMovie;
+        if(title.equals(nameToSearchFor)){
+            return extractMusicModelFromTable(tableRows, title);
         }
         return null;
+    }
+
+    public MusicModel extractMusicModelFromTable(Elements tableRows,String name) {
+        String genre = "", format = "", artist = "";
+        int year = 0;
+        for(int i = 0; i < tableRows.size(); i++){
+            switch(i){
+                case 1:
+                    genre = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+                case 2:
+                    format = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+                case 3:
+                    year = Integer.parseInt(tableRows.get(i).select("td").text().toLowerCase());
+                    break;
+                case 4:
+                    artist = tableRows.get(i).select("td").toString().toLowerCase();
+                    break;
+            }
+        }
+        return new MusicModel(name, genre, format, year, artist);
     }
 
     public MovieModel findSingleMovie(String nameToSearchFor, String url) {
