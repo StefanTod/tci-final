@@ -15,7 +15,7 @@ public class CrawlerTest {
     String baseUrl;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         crawler = new Crawler();
         baseUrl = "http://i371829.hera.fhict.nl/tci-test-site/index.php";
     }
@@ -28,15 +28,15 @@ public class CrawlerTest {
     //if links == null; find all links
 
 
-    @Test (expected = IllegalArgumentException.class)
-    public void ifAnUnexistingTypeOfMediaIsPutInThrowAnException(){
+    @Test(expected = IllegalArgumentException.class)
+    public void ifAnUnexistingTypeOfMediaIsPutInThrowAnException() {
         crawler.findSingleItem("invalidItemType", "The Lord of the Rings: The Fellowship of the Ring");
 
         Assert.fail("After calling the findSingleItem() method of the Craweler class with an invalid item type argument, an IllegalArgumentException should have been thrown.");
     }
 
 
-    private static Object[] getAllLegitItemTypes(){
+    private static Object[] getAllLegitItemTypes() {
         return new Object[]{
                 new Object[]{"book"},
                 new Object[]{"music"},
@@ -46,11 +46,21 @@ public class CrawlerTest {
 
     @Test
     @Parameters(method = "getAllLegitItemTypes")
-    public void ifAnyOfTheSupportedTypesOfMediaAreRequestedDontThrowAnException(String validItemType){
+    public void ifAnyOfTheSupportedTypesOfMediaAreRequestedDontThrowAnException(String validItemType) {
         try {
             crawler.findSingleItem(validItemType, "The Lord of the Rings: The Fellowship of the Ring");
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             Assert.fail(String.format("Method getSingleItem of the Crawler class should not have thrown an IllegalArgumentException for the valid item type input \"%1$s\", when it comes with a valid item name. Despite this, it threw an exception.", validItemType));
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ifAnEmptyStringIsGivenAsItemNameInputWhenLookingForASingleItemThrowExceptionTest() {
+        try {
+            crawler.findSingleItem("movie", "");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "The name of the item that is being looked for cannot be an empty tring.");
+            throw e;
         }
     }
 }
