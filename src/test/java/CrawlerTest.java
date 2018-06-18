@@ -6,7 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.security.AlgorithmConstraints;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -30,14 +32,17 @@ public class CrawlerTest {
 
         try {
             crawler.findSingleItem(invalidItemType, "The Lord of the Rings: The Fellowship of the Ring", baseUrl);
-        } catch (Exception e){
-            assertEquals("When passing an ivalid itemType to the Craweler.findSingleItem(), an IllegalArgumentException should be thrown. Such an exception was thrown, but it was because of a bad itemName argument and not because of a bad itemType argument.",
+        } catch (IllegalArgumentException e) {
+            assertEquals("When passing an ivalid itemType to the Crawler.findSingleItem(), an IllegalArgumentException should be thrown. Such an exception was thrown, but it was because of a bad itemName argument and not because of a bad itemType argument.",
                     String.format("Our API only supports looking for books, movies and music. You cannot look for items of type %1$s!",
                             invalidItemType), e.getMessage());
             throw e;
+        } catch (IOException e) {
+            Assert.fail("Unexpected IOException thrown.");
         }
+
         Assert.fail("After calling the findSingleItem() method of the Crawler class with an invalid item type argument, " +
-                        "an IllegalArgumentException should have been thrown.");
+                "an IllegalArgumentException should have been thrown.");
     }
 
 
@@ -56,10 +61,12 @@ public class CrawlerTest {
             crawler.findSingleItem(validItemType, "The Lord of the Rings: The Fellowship of the Ring", baseUrl);
         } catch (IllegalArgumentException e) {
             Assert.fail(String.format("Method getSingleItem of the Crawler class should not have thrown an IllegalArgumentException for the valid item type input \"%1$s\", when it comes with a valid item name. Despite this, it threw an exception.", validItemType));
+        } catch (IOException e) {
+            Assert.fail("Unexpected IOException thrown.");
         }
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ifAnEmptyStringIsGivenAsItemNameInputWhenLookingForASingleItemThrowExceptionTest() {
         try {
             crawler.findSingleItem("movie", "", baseUrl);
@@ -67,26 +74,37 @@ public class CrawlerTest {
             assertEquals("When passing an empty string argument as itemName of the Crawler.findSinleItem(), an IllegalArgumentException should be thrown. Such an exception was thrown, but it had the wrong message.",
                     "The name of the item that is being looked for cannot be an empty tring.", e.getMessage());
             throw e;
+        } catch (IOException e) {
+            Assert.fail("Unexpected IOException thrown.");
         }
 
         Assert.fail("After calling the findSingleItem() method of the Crawler class an empty itemName argument, an IllegalArgumentException should have been thrown.");
     }
 
-    //case book
-    //case movie
-    //case music
-    //case none
-    //type is book, name is movie - params with different combos
-    //if links == null; find all links
-
     @Test
-    public void ifUrlsListIsEmptyRunTriggerUrlsRetrievalBeforeInitiatingItemSearch(){
+    public void runTriggerUrlsRetrievalBeforeInitiatingSingleItemSearch() {
         Algorithm alg = mock(Algorithm.class);
         crawler.setAlgorithm(alg);
 
-        crawler.findSingleItem("movie", "The Lord of the Rings: The Fellowship of the Ring", baseUrl);
+        try {
+            crawler.findSingleItem("movie", "The Lord of the Rings: The Fellowship of the Ring", baseUrl);
+        } catch (IOException e) {
+            Assert.fail("Unexpected IOException thrown.");
+        }
 
-        verify(alg).getAllUrls();
         verify(alg).crawlWebsite(baseUrl, 0);
+    }
+
+    @Test
+    public void makeSureTheIteratingMethodOfTheScraperIsCalled() throws IOException {
+        String itemType = "movie";
+        String itemName = "The Lord of the Rings: The Fellowship of the Ring";
+        Scraper scr = mock(Scraper.class);
+
+        crawler.setScraper(scr);
+
+        crawler.findSingleItem(itemType, itemName, baseUrl);
+
+        verify(scr).findSingleItem(itemType, itemName, (ArrayList) crawler.getAllUrls());
     }
 }
