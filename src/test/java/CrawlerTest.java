@@ -30,9 +30,18 @@ public class CrawlerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void ifAnUnexistingTypeOfMediaIsPutInThrowAnException() {
-        crawler.findSingleItem("invalidItemType", "The Lord of the Rings: The Fellowship of the Ring");
+        String invalidItemType = "invalidItemType";
 
-        Assert.fail("After calling the findSingleItem() method of the Craweler class with an invalid item type argument, an IllegalArgumentException should have been thrown.");
+        try {
+            crawler.findSingleItem(invalidItemType, "The Lord of the Rings: The Fellowship of the Ring");
+        } catch (Exception e){
+            assertEquals("When passing an ivalid itemType to the Craweler.findSingleItem(), an IllegalArgumentException should be thrown. Such an exception was thrown, but it was because of a bad itemName argument and not because of a bad itemType argument.",
+                    String.format("Our API only supports looking for books, movies and music. You cannot look for items of type %1$s!",
+                            invalidItemType), e.getMessage());
+            throw e;
+        }
+        Assert.fail("After calling the findSingleItem() method of the Crawler class with an invalid item type argument, " +
+                        "an IllegalArgumentException should have been thrown.");
     }
 
 
@@ -54,13 +63,16 @@ public class CrawlerTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void ifAnEmptyStringIsGivenAsItemNameInputWhenLookingForASingleItemThrowExceptionTest() {
         try {
             crawler.findSingleItem("movie", "");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "The name of the item that is being looked for cannot be an empty tring.");
+            assertEquals("When passing an empty string argument as itemName of the Crawler.findSinleItem(), an IllegalArgumentException should be thrown. Such an exception was thrown, but it had the wrong message.",
+                    "The name of the item that is being looked for cannot be an empty tring.", e.getMessage());
             throw e;
         }
+
+        Assert.fail("After calling the findSingleItem() method of the Crawler class an empty itemName argument, an IllegalArgumentException should have been thrown.");
     }
 }
