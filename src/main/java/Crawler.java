@@ -31,13 +31,11 @@ public class Crawler {
         return scraper.findSingleItem(itemType, itemName, (ArrayList) triggerUrlsRetrieval(baseUrl));
     }
 
-    public List<Item> findAllItems(String baseUrl) {
+    public List<Item> findAllItems(String baseUrl) throws IOException {
         if (baseUrl.length() < 1)
             throw new IllegalArgumentException("baseUrl parameter cannot be an empty string.");
 
-        triggerUrlsRetrieval(baseUrl);
-
-        return null;
+        return scraper.findAllItems((ArrayList)triggerUrlsRetrieval(baseUrl));
     }
 
     public List<String> triggerUrlsRetrieval(String baseUrl) {

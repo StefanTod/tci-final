@@ -6,4 +6,7 @@ public class Scraper {
         return null;
     }
 
+    public ArrayList<Item> findAllItems(ArrayList<String> urlsToSearchIn) throws IOException {
+        return null;
+    }
 }

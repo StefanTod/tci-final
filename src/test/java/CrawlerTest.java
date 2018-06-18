@@ -50,7 +50,7 @@ public class CrawlerTest {
             String expected = String.format("Our API only supports looking for books, movies and music. You cannot look for items of type %1$s!",
                     invalidItemType);
             assertEquals(String.format("When passing an ivalid itemType to the Crawler.findSingleItem(), an IllegalArgumentException should be thrown. Such an exception was thrown, but it was because of a bad itemName argument and not because of a bad itemType argument. Expected was: \"%1$s\" and actual was: %2$s", expected, e.getMessage()),
-                   expected , e.getMessage());
+                    expected, e.getMessage());
             throw e;
         } catch (IOException e) {
             Assert.fail("Unexpected IOException thrown. Exception message: " + e.getMessage());
@@ -108,7 +108,7 @@ public class CrawlerTest {
             crawler.findSingleItem(properItemType, properItemName, baseUrl);
         } catch (IllegalArgumentException e) {
             Assert.fail(String.format("The arguments passed to the Crawler.findSingleItem (%1$s, %2$s, %3$s) were correct, but an IllegalArgumentException was thrown with message %3$s", properItemType, properItemName, baseUrl, e.getMessage()));
-        } catch (IOException e){
+        } catch (IOException e) {
             Assert.fail("Unexpected IOException thrown. Exception message: " + e.getMessage());
         }
     }
@@ -140,33 +140,55 @@ public class CrawlerTest {
     //End of method Crawler.findSingleItem tests.
 
 
-
     //Beginning of method Crawler.findAllItems tests.
     @Test(expected = IllegalArgumentException.class)
-    public void ifAnEmptyStringUrlIsPassedAsArgumentToFindAllItemsThrowExceptionTest(){
+    public void ifAnEmptyStringUrlIsPassedAsArgumentToFindAllItemsThrowExceptionTest() {
+        try {
             crawler.findAllItems("");
+        } catch (IOException e) {
+            Assert.fail("Unexpected IOException thrown. Exception message: " + e.getMessage());
+        }
 
-            Assert.fail("When an empty string was passed as an argument to the method Crawler.findAllItems, an IllegalArgumentException was expected. Such an exception was not thrown.");
+        Assert.fail("When an empty string was passed as an argument to the method Crawler.findAllItems, an IllegalArgumentException was expected. Such an exception was not thrown.");
     }
 
     @Test
-    public void ifALegitURLIsPassedAsArgumentToFindAllItemsDontThrowExceptionTest(){
+    public void ifALegitURLIsPassedAsArgumentToFindAllItemsDontThrowExceptionTest() {
         try {
             crawler.findAllItems(baseUrl);
-        }catch (Exception e){
+        } catch (Exception e) {
             Assert.fail("The method Crawler.findAllItems was passed a valid parameter. It should not have thrown an exception. Parameter: " + baseUrl);
         }
     }
 
 
     @Test
-    public void verifyThatTheAlgorithmIsCalledBeforeAttemptingToFindAllItemsTest(){
+    public void verifyThatTheAlgorithmIsCalledBeforeAttemptingToFindAllItemsTest() {
         Algorithm alg = mock(Algorithm.class);
         crawler.setAlgorithm(alg);
 
-        crawler.findAllItems(baseUrl);
+        try {
+            crawler.findAllItems(baseUrl);
+        } catch (IOException e) {
+            Assert.fail("Unexpected IOException thrown. Exception message: " + e.getMessage());
+        }
 
         verify(alg).crawlWebsite(baseUrl, 0);
+    }
+
+    @Test
+    public void verifyThatTheFindAllItemsOfTheCrawlerIsCalledWhenAttemptingToCallTheAllItemsFindingMethodOfTheCrawlerClassTest() {
+        Scraper scr = mock(Scraper.class);
+
+        crawler.setScraper(scr);
+
+
+        try {
+            crawler.findAllItems(baseUrl);
+            verify(scr).findAllItems((ArrayList) crawler.getAllUrls());
+        } catch (IOException e) {
+            Assert.fail("Unexpected IOException thrown. Exception message: " + e.getMessage());
+        }
     }
     //End of method Crawler.findSingleItem tests.
 }
