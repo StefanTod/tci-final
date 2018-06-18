@@ -1,4 +1,6 @@
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import models.Item;
+import scraper.Scraper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ public class Crawler {
         scraper = new Scraper();
     }
 
-    public Item findSingleItem(String itemType, String itemName, String baseUrl) throws IllegalArgumentException, IOException {
+    public Item findSingleItem(String itemType, String itemName, String baseUrl) throws IllegalArgumentException, IOException, JSoupException {
         if (!itemType.equals("book") && !itemType.equals("movie") && !itemType.equals("music")) {
             throw new IllegalArgumentException(String.format("Our API only supports looking for books, movies and music. You cannot look for items of type %1$s!", itemType));
         }
@@ -30,11 +32,11 @@ public class Crawler {
         return scraper.findSingleItem(itemType, itemName, (ArrayList) triggerUrlsRetrieval(baseUrl));
     }
 
-    public List<Item> findAllItems(String baseUrl) throws IOException {
+    public ArrayList findAllItems(String baseUrl) throws IOException, JSoupException {
         if (baseUrl.length() < 1)
             throw new IllegalArgumentException("baseUrl parameter cannot be an empty string.");
 
-        return scraper.findAllItems((ArrayList)triggerUrlsRetrieval(baseUrl));
+        return scraper.findAllItems((ArrayList) triggerUrlsRetrieval(baseUrl));
     }
 
     public Algorithm getAlgorithm() {
