@@ -30,6 +30,15 @@ public class CrawlerTest {
         properItemName = "The Lord of the Rings: The Fellowship of the Ring";
     }
 
+    private static Object[] getAllLegitItemTypes() {
+        return new Object[]{
+                new Object[]{"book"},
+                new Object[]{"music"},
+                new Object[]{"movie"}
+        };
+    }
+
+    //Beginning of method Crawler.findSingleItem tests.
     @Test(expected = IllegalArgumentException.class)
     public void ifAnInexistantTypeOfMediaIsPutInAsArgumentOfFindSingleItemMethodThrowAnExceptionTest() {
         String invalidItemType = "invalidItemType";
@@ -47,15 +56,6 @@ public class CrawlerTest {
 
         Assert.fail("After calling the findSingleItem() method of the Crawler class with an invalid item type argument, " +
                 "an IllegalArgumentException should have been thrown.");
-    }
-
-
-    private static Object[] getAllLegitItemTypes() {
-        return new Object[]{
-                new Object[]{"book"},
-                new Object[]{"music"},
-                new Object[]{"movie"}
-        };
     }
 
     @Test
@@ -134,4 +134,19 @@ public class CrawlerTest {
 
         verify(scr).findSingleItem(properItemType, properItemName, (ArrayList) crawler.getAllUrls());
     }
+    //End of method Crawler.findSingleItem tests.
+
+
+
+    //Beginning of method Crawler.findAllItems tests.
+    @Test(expected = IllegalArgumentException.class)
+    public void ifAnEmptyStringUrlIsPassedAsArgumentToFindAllItemsThrowExceptionTest(){
+            crawler.findAllItems("");
+
+            Assert.fail("When an empty string was passed as an argument to the method Crawler.findAllItems, an IllegalArgumentException was expected. Such exception was not thrown.");
+    }
+
+
+
+    //End of method Crawler.findSingleItem tests.
 }

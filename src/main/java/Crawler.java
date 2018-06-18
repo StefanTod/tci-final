@@ -31,6 +31,10 @@ public class Crawler {
         return scraper.findSingleItem(itemType, itemName, (ArrayList) triggerUrlsRetrieval(baseUrl));
     }
 
+    public List<Item> findAllItems(String baseUrl){
+        throw new IllegalArgumentException("baseUrl parameter cannot be an empty string.");
+        }
+
     public List<String> triggerUrlsRetrieval(String baseUrl) {
         algorithm.crawlWebsite(baseUrl, 0);
         return new ArrayList<String>();
