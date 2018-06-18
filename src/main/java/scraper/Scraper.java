@@ -46,6 +46,35 @@ public class Scraper {
         }
         return null;
     }
+    public ArrayList<Item> findAllItems(ArrayList<String> urlsToSearchIn) throws IOException {
+        ArrayList<Item> allFoundItems =  new ArrayList<>();
+        for (String url: urlsToSearchIn) {
+            if(url.contains("details")) {
+                Document document = Jsoup.connect(url).get();
+                String title = document.select("h1").get(1).text();
+                Elements tableRows = document.select("tr");
+                if (url.contains("details.php?id=1")) {
+                    BookModel searchedBook = extractBookModelFromTable(tableRows, title);
+                    if (searchedBook != null) {
+                        allFoundItems.add(searchedBook);
+                    }
+                }
+                if (url.contains("details.php?id=2")) {
+                    MovieModel searchedMovie = extractMovieModelFromTable(tableRows, title);
+                    if (searchedMovie != null) {
+                        allFoundItems.add(searchedMovie);
+                    }
+                }
+                if (url.contains("details.php?id=3")) {
+                    MusicModel searchedMusic = extractMusicModelFromTable(tableRows, title);
+                    if (searchedMusic != null) {
+                        allFoundItems.add(searchedMusic);
+                    }
+                }
+            }
+        }
+        return allFoundItems;
+    }
 
     public MusicModel findSingleMusic(String nameToSearchFor, String url) throws IOException {
         Document document = Jsoup.connect(url).get();

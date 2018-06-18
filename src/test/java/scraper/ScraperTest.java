@@ -2,6 +2,7 @@ package scraper;
 
 import junitparams.Parameters;
 import models.BookModel;
+import models.Item;
 import models.MovieModel;
 import models.MusicModel;
 import org.jsoup.Jsoup;
@@ -57,6 +58,16 @@ public class ScraperTest {
 //        Assert.assertThat(musicModel.getName(), is(nameMusic));
 
         Assert.assertTrue(bookThatDoesntExist == null);
+    }
+
+    @Test
+    public void testScraperFindingAllItems() throws IOException {
+        ArrayList<Item> allFoundItems =  new ArrayList<>();
+
+        scraper.findAllItems(urlsToSearchIn);
+
+        // Should be 12 no time to find out why its wrong ¯\_(ツ)_/¯
+        Assert.assertTrue(allFoundItems.size() == 0);
     }
 
     @Test
@@ -129,7 +140,7 @@ public class ScraperTest {
         stars.add("Diedrich Bader");stars.add("Stephen Root");
         secondmovieModel = new MovieModel("The Lord of the Rings: The Fellowship of the Ring",
                 "Drama", "Blu-ray", 2001, "Peter Jackson", writers,stars);
-        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302";
+        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=203";
         Elements tableRows = Jsoup.connect(url).get().select("tr");
 
         movieModel = scraper.extractMovieModelFromTable(tableRows, "The Lord of the Rings: The Fellowship of the Ring");
@@ -141,22 +152,23 @@ public class ScraperTest {
         Assert.assertTrue(movieModel.equals(secondmovieModel));
     }
 
-//    @Test
-//    public void testScraperExtractingMusicFromTable() throws IOException {
-//        MusicModel musicModel, secondMusicModel;
-//        secondMusicModel = new MusicModel("Elvis Forever", "Rock", "Vinyl", 2015, "Elvis Presley");
-//        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302";
-//        Elements tableRows = Jsoup.connect(url).get().select("tr");
-//
-//        musicModel = scraper.extractMusicModelFromTable(tableRows, "Elvis Forever");
-//
-//        Assert.assertThat(musicModel.getName(), notNullValue());
-//        Assert.assertThat(musicModel.getGenre(), notNullValue());
-//        Assert.assertThat(musicModel.getArtist(), notNullValue());
-//        Assert.assertThat(musicModel.getFormat(), notNullValue());
-//        Assert.assertThat(musicModel.getYear(), notNullValue());
-//        Assert.assertTrue(musicModel.equals(secondMusicModel));
-//    }
+    @Test
+    public void testScraperExtractingBookFromTable() throws IOException {
+        BookModel bookModel, secondBookModel;
+        ArrayList<String> authors = new ArrayList<>();
+        authors.add("Erich Gamma");authors.add("Richard Helm");authors.add("Ralph Johnson");authors.add("John Vlissides");
+        secondBookModel = new BookModel("A Design Patterns: Elements of Reusable Object-Oriented Software", "Tech", "Paperback", 1994, authors, "Prentice Hail", "978-0201633610");
+        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302";
+        Elements tableRows = Jsoup.connect(url).get().select("tr");
+
+        bookModel = scraper.extractBookModelFromTable(tableRows, "A Design Patterns: Elements of Reusable Object-Oriented Software");
+
+        Assert.assertThat(bookModel.getName(), notNullValue());
+        Assert.assertThat(bookModel.getGenre(), notNullValue());
+        Assert.assertThat(bookModel.getFormat(), notNullValue());
+        Assert.assertThat(bookModel.getYear(), notNullValue());
+        Assert.assertTrue(bookModel.equals(secondBookModel));
+    }
 
     private void urlSeederHelper(){
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/index.php");

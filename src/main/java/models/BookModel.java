@@ -74,4 +74,12 @@ public class BookModel implements Book {
      */
     @Override
     public String getName() { return this.name; }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        BookModel bookModel = (BookModel) o;
+        return name == (bookModel.getName());
+    }
 }
