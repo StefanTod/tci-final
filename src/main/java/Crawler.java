@@ -35,6 +35,8 @@ public class Crawler {
         if (baseUrl.length() < 1)
             throw new IllegalArgumentException("baseUrl parameter cannot be an empty string.");
 
+        triggerUrlsRetrieval(baseUrl);
+
         return null;
     }
 

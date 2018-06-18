@@ -158,5 +158,15 @@ public class CrawlerTest {
         }
     }
 
+
+    @Test
+    public void verifyThatTheAlgorithmIsCalledBeforeAttemptingToFindAllItemsTest(){
+        Algorithm alg = mock(Algorithm.class);
+        crawler.setAlgorithm(alg);
+
+        crawler.findAllItems(baseUrl);
+
+        verify(alg).crawlWebsite(baseUrl, 0);
+    }
     //End of method Crawler.findSingleItem tests.
 }
