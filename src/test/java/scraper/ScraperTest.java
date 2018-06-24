@@ -1,20 +1,23 @@
 package scraper;
 
+import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import models.BookModel;
-import models.Item;
-import models.MovieModel;
-import models.MusicModel;
+import models.*;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.*;
 
+@RunWith(JUnitParamsRunner.class)
 public class ScraperTest {
 
     Scraper scraper;
@@ -33,41 +36,45 @@ public class ScraperTest {
     }
 
     @Test
-    public void testScraperFindsASingleItem() throws IOException {
+    @Parameters(method = "getBooksToSearchFor")
+    public void testScraperFindsASingleBook(String type, String name) throws IOException {
         BookModel bookModel;
-        MusicModel musicModel;
-        MovieModel movieModel;
-        BookModel bookThatDoesntExist;
-        String nameBook = "A Design Patterns: Elements of Reusable Object-Oriented Software";
-        String nameNonExistentBook = "Pretty sure there is no such name for a book";
-        String nameMovie = "Office Space";
-        String nameMusic = "No Fences";
 
-        bookModel = (BookModel) scraper.findSingleItem("book", nameBook, urlsToSearchIn);
-        bookThatDoesntExist = (BookModel) scraper.findSingleItem("book", nameNonExistentBook, urlsToSearchIn);
-        movieModel = (MovieModel) scraper.findSingleItem("movie", nameMovie, urlsToSearchIn);
-        musicModel = (MusicModel) scraper.findSingleItem("music", nameBook, urlsToSearchIn);
+        bookModel = (BookModel) scraper.findSingleItem(type, name, urlsToSearchIn);
 
         Assert.assertTrue(bookModel != null);
-        Assert.assertThat(bookModel.getName(), is(nameBook));
+        Assert.assertThat(bookModel.getName(), is(name));
+    }
+
+    @Test
+    @Parameters(method = "getMoviesToSearchFor")
+    public void testScraperFindsASingleMovie(String type, String name) throws IOException {
+        MovieModel movieModel;
+
+        movieModel = (MovieModel) scraper.findSingleItem(type, name, urlsToSearchIn);
 
         Assert.assertTrue(movieModel != null);
-        Assert.assertThat(movieModel.getName(), is(nameMovie));
+        Assert.assertThat(movieModel.getName(), is(name));
+    }
 
-        Assert.assertTrue(musicModel != null);
-//        Assert.assertThat(musicModel.getName(), is(nameMusic));
+    @Test
+    @Parameters(method = "getMusicToSearchFor")
+    public void testScraperFindsASingleMusic(String type, String name) throws IOException {
+        MusicModel musicModel;
 
-        Assert.assertTrue(bookThatDoesntExist == null);
+        musicModel = (MusicModel) scraper.findSingleItem(type, name, urlsToSearchIn);
+
+        Assert.assertTrue(musicModel!= null);
+        Assert.assertThat(musicModel.getName(), is(name));
     }
 
     @Test
     public void testScraperFindingAllItems() throws IOException {
-        ArrayList<Item> allFoundItems =  new ArrayList<>();
+        ArrayList<Item> allFoundItems;
 
-        scraper.findAllItems(urlsToSearchIn);
+        allFoundItems = scraper.findAllItems(urlsToSearchIn);
 
-        // Should be 12 no time to find out why its wrong ¯\_(ツ)_/¯
-        Assert.assertTrue(allFoundItems.size() == 0);
+        Assert.assertTrue(allFoundItems.size() == 12);
     }
 
     @Test
@@ -113,13 +120,15 @@ public class ScraperTest {
     }
 
     @Test
-    public void testScraperExtractingMusicFromTable() throws IOException {
+    @Parameters(method = "getDifferentMusic")
+    public void testScraperExtractingMusicFromTable(String name, String genre, String format, int year, String artist, String pageId) throws IOException {
         MusicModel musicModel, secondMusicModel;
-        secondMusicModel = new MusicModel("Elvis Forever", "Rock", "Vinyl", 2015, "Elvis Presley");
-        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302";
-        Elements tableRows = Jsoup.connect(url).get().select("tr");
+        String url; Elements tableRows;
 
-        musicModel = scraper.extractMusicModelFromTable(tableRows, "Elvis Forever");
+        secondMusicModel = new MusicModel(name, genre, format, year, artist);
+        url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=" + pageId;
+        tableRows = Jsoup.connect(url).get().select("tr");
+        musicModel = scraper.extractMusicModelFromTable(tableRows, name);
 
         Assert.assertThat(musicModel.getName(), notNullValue());
         Assert.assertThat(musicModel.getGenre(), notNullValue());
@@ -130,20 +139,15 @@ public class ScraperTest {
     }
 
     @Test
-    public void testScraperExtractingMovieFromTable() throws IOException {
+    @Parameters(method = "getDifferentMovies")
+    public void testScraperExtractingMovieFromTable(String name, String genre, String format, int year, String director, List<String> writers, List<String> stars, String pageId) throws IOException {
         MovieModel movieModel, secondmovieModel;
-        ArrayList<String> writers = new ArrayList<>();
-        ArrayList<String> stars = new ArrayList<>();
-        // Yes I know it looks horrible, but its also 4:30 in the morning
-        writers.add("J.R.R. Tolkien"); writers.add("Fran Walsh"); writers.add("Philippa Boyens");
-        stars.add("Ron Livingston");stars.add("Jennifer Aniston");stars.add("David Herman");stars.add("Ajay Naidu");
-        stars.add("Diedrich Bader");stars.add("Stephen Root");
-        secondmovieModel = new MovieModel("The Lord of the Rings: The Fellowship of the Ring",
-                "Drama", "Blu-ray", 2001, "Peter Jackson", writers,stars);
-        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=203";
-        Elements tableRows = Jsoup.connect(url).get().select("tr");
+        String url; Elements tableRows;
 
-        movieModel = scraper.extractMovieModelFromTable(tableRows, "The Lord of the Rings: The Fellowship of the Ring");
+        secondmovieModel = new MovieModel(name, genre, format, year, director, writers, stars);
+        url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=" + pageId;
+        tableRows = Jsoup.connect(url).get().select("tr");
+        movieModel = scraper.extractMovieModelFromTable(tableRows, name);
 
         Assert.assertThat(movieModel.getName(), notNullValue());
         Assert.assertThat(movieModel.getGenre(), notNullValue());
@@ -153,15 +157,15 @@ public class ScraperTest {
     }
 
     @Test
-    public void testScraperExtractingBookFromTable() throws IOException {
+    @Parameters(method = "getDifferentBooks")
+    public void testScraperExtractingBookFromTable(String name, String genre, String type, int year, List<String> authors, String publisher, String isbn, String pageId ) throws IOException {
         BookModel bookModel, secondBookModel;
-        ArrayList<String> authors = new ArrayList<>();
-        authors.add("Erich Gamma");authors.add("Richard Helm");authors.add("Ralph Johnson");authors.add("John Vlissides");
-        secondBookModel = new BookModel("A Design Patterns: Elements of Reusable Object-Oriented Software", "Tech", "Paperback", 1994, authors, "Prentice Hail", "978-0201633610");
-        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=302";
-        Elements tableRows = Jsoup.connect(url).get().select("tr");
+        String url; Elements tableRows;
 
-        bookModel = scraper.extractBookModelFromTable(tableRows, "A Design Patterns: Elements of Reusable Object-Oriented Software");
+        secondBookModel = new BookModel(name, genre, type, year, authors, publisher, isbn);
+        url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=" + pageId;
+        tableRows = Jsoup.connect(url).get().select("tr");
+        bookModel = scraper.extractBookModelFromTable(tableRows, name);
 
         Assert.assertThat(bookModel.getName(), notNullValue());
         Assert.assertThat(bookModel.getGenre(), notNullValue());
@@ -185,5 +189,59 @@ public class ScraperTest {
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/details.php?id=303");
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/details.php?id=304");
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/catalog.php");
+    }
+
+    private static final Object[] getDifferentBooks(){
+        return new Object[]{
+                new Object[] {"Clean Code: A Handbook of Agile Software Craftsmanship", "Tech", "Ebook", 2008, Arrays.asList("Robert C. Martin"), "Prentice Hail", "978-0132350884", "102"},
+                new Object[] {"The Clean Coder: A Code of Conduct for Professional Programmers", "Tech", "Audio", 2011, Arrays.asList("Robert C. Martin"), "Prentice Hail", "007-6092046981", "104"},
+                new Object[] {"A Design Patterns: Elements of Reusable Object-Oriented Software", "Tech", "Paperback", 1994, Arrays.asList("Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"), "Prentice Hail", "978-0201633610", "101"},
+                new Object[] {"Refactoring: Improving the Design of Existing Code", "Tech", "Hardcover", 1999, Arrays.asList("Martin Fowler", "Kent Beck", "John Brant", "William Opdyke", "Don Roberts") , "Addison-Wesley Professional", "978-0201485677", "103"}
+        };
+    }
+
+    private static final Object[] getDifferentMovies(){
+        return new Object[]{
+                new Object[] {"Forrest Gump", "Drama", "DVD", 1994,"Robert Zemeckis", Arrays.asList("Winston Groom", "Eric Roth"), Arrays.asList("Tom Hanks, Rebecca Williams", "Sally Field", "Michael Conner Humphreys"), "201"},
+                new Object[] {"The Lord of the Rings: The Fellowship of the Ring", "Drama", "Blu-ray", 2001, "Peter Jackson", Arrays.asList("J.R.R. Tolkien", "Fran Walsh", "Philippa Boyens", "Peter Jackson"), Arrays.asList("Ron Livingston", "Jennifer Aniston", "David Herman", "Ajay Naidu", "Diedrich Bader", "Stephen Root"), "203"},
+                new Object[] {"Office Space", "Comedy", "Blu-ray", 1999, "Mike Judge", Arrays.asList("William Goldman"), Arrays.asList("Ron Livingston", "Jennifer Aniston", "David Herman", "Ajay Naidu", "Diedrich Bader", "Stephen Root"), "202"},
+                new Object[] {"The Princess Bride", "Comedy", "DVD", 1987, "Rob Reiner", Arrays.asList("William Goldman"), Arrays.asList("Cary Elwes", "Mandy Patinkin", "Robin Wright", "Chris Sarandon", "Christopher Guest", "Wallace Shawn", "AndrÃ© the Giant", "Fred Savage", "Peter Falk", "Billy Crystal"), "204"}
+        };
+    }
+
+    private static final Object[] getDifferentMusic(){
+        return new Object[]{
+                new Object[] {"Beethoven: Complete Symphonies", "Clasical", "CD", 2012, "Ludwig van Beethoven", "301"},
+                new Object[] {"Elvis Forever", "Rock", "Vinyl", 2015, "Elvis Presley", "302"},
+                new Object[] {"No Fences", "Country", "Cassette", 1990, "Garth Brooks", "303"},
+                new Object[] {"The Very Thought of You", "Jaz", "MP3", 2008, "Nat King Cole", "201"},
+        };
+    }
+
+    private static final Object[] getBooksToSearchFor(){
+        return new Object[]{
+                new Object[]{"book", "Clean Code: A Handbook of Agile Software Craftsmanship"},
+                new Object[]{"book", "The Clean Coder: A Code of Conduct for Professional Programmers"},
+                new Object[]{"book", "A Design Patterns: Elements of Reusable Object-Oriented Software"},
+                new Object[]{"book", "Refactoring: Improving the Design of Existing Code"}
+        };
+    }
+
+    private static final Object[] getMoviesToSearchFor(){
+        return new Object[]{
+                new Object[]{"movie", "Forrest Gump"},
+                new Object[]{"movie", "The Lord of the Rings: The Fellowship of the Ring"},
+                new Object[]{"movie", "Office Space"},
+                new Object[]{"movie", "The Princess Bride"}
+        };
+    }
+
+    private static final Object[] getMusicToSearchFor(){
+        return new Object[]{
+                new Object[]{"music", "Beethoven: Complete Symphonies"},
+                new Object[]{"music", "Elvis Forever"},
+                new Object[]{"music", "No Fences"},
+                new Object[]{"music", "The Very Thought of You"}
+        };
     }
 }

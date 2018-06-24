@@ -11,15 +11,14 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class Scraper {
 
     public Scraper() {
     }
 
-    public Item findSingleItem(String typeToSearchFor, String nameToSearchFor, ArrayList<String> urlsToSearchIn) throws IOException {
+    public Item findSingleItem(String typeToSearchFor, String nameToSearchFor, List<String> urlsToSearchIn) throws IOException {
         for (String url: urlsToSearchIn) {
             if(url.contains("details")){
                 switch (typeToSearchFor){
@@ -46,8 +45,9 @@ public class Scraper {
         }
         return null;
     }
-    public ArrayList<Item> findAllItems(ArrayList<String> urlsToSearchIn) throws IOException {
-        ArrayList<Item> allFoundItems =  new ArrayList<>();
+
+    public ArrayList<Item> findAllItems(List<String> urlsToSearchIn) throws IOException {
+        ArrayList<Item> allFoundItems = new ArrayList<>();
         for (String url: urlsToSearchIn) {
             if(url.contains("details")) {
                 Document document = Jsoup.connect(url).get();
