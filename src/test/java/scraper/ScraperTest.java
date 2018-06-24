@@ -202,7 +202,23 @@ public class ScraperTest {
         verify(scraper).extractMovieModelFromTable(new Elements(), "SomeMovieName");
         verify(scraper).extractMusicModelFromTable(new Elements(), "SomeMusicName");
     }
-    
+
+    // Spying on Scraper to see if findSingleItem() calls according findSingleBook/Music/Movie()
+    @Test
+    public void testScraperCheckIfFindItemCallsSearchingMethods() throws IOException {
+        Scraper scraper = spy(new Scraper());
+        // This url is always the first one passed.
+        String firstUrlPassed = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=101";
+
+        scraper.findSingleItem("book","SomeBook", urlsToSearchIn);
+        scraper.findSingleItem("music","SomeMusic", urlsToSearchIn);
+        scraper.findSingleItem("movie","SomeMovie", urlsToSearchIn);
+
+        verify(scraper, times(1)).findSingleBook("SomeBook",firstUrlPassed);
+        verify(scraper, times(1)).findSingleMusic("SomeMusic",firstUrlPassed);
+        verify(scraper, times(1)).findSingleMovie("SomeMovie",firstUrlPassed);
+    }
+
     private void urlSeederHelper(){
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/index.php");
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/details.php?id=101");
