@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(JUnitParamsRunner.class)
 public class ScraperTest {
@@ -179,6 +181,28 @@ public class ScraperTest {
         Assert.assertTrue(bookModel.equals(secondBookModel));
     }
 
+    @Test
+    public void testScraperVerifyCallingFindSingleItemMethod() throws IOException {
+        Scraper scraper = mock(Scraper.class);
+
+        scraper.findSingleItem("book","SomeBookName", urlsToSearchIn);
+
+        verify(scraper).findSingleItem("book", "SomeBookName", urlsToSearchIn);
+    }
+
+    @Test
+    public void testScraperVerifyCallingExtractItemFromTableMethod(){
+        Scraper scraper = mock(Scraper.class);
+
+        scraper.extractBookModelFromTable(new Elements(),"SomeBookName");
+        scraper.extractMovieModelFromTable(new Elements(),"SomeMovieName");
+        scraper.extractMusicModelFromTable(new Elements(),"SomeMusicName");
+
+        verify(scraper).extractBookModelFromTable(new Elements(), "SomeBookName");
+        verify(scraper).extractMovieModelFromTable(new Elements(), "SomeMovieName");
+        verify(scraper).extractMusicModelFromTable(new Elements(), "SomeMusicName");
+    }
+    
     private void urlSeederHelper(){
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/index.php");
         urlsToSearchIn.add("http://i371829.hera.fhict.nl/tci-test-site/details.php?id=101");
