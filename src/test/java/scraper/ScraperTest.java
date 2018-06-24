@@ -46,6 +46,11 @@ public class ScraperTest {
         Assert.assertThat(bookModel.getName(), is(name));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testScraperReturningExceptionOnEmptyName() throws IOException {
+        scraper.findSingleItem("","", urlsToSearchIn);
+    }
+
     @Test
     @Parameters(method = "getMoviesToSearchFor")
     public void testScraperFindsASingleMovie(String type, String name) throws IOException {

@@ -19,6 +19,10 @@ public class Scraper {
     }
 
     public Item findSingleItem(String typeToSearchFor, String nameToSearchFor, List<String> urlsToSearchIn) throws IOException {
+        if(nameToSearchFor.isEmpty()){
+            throw new IllegalArgumentException("You need to provide the item name you are searching for!");
+        }
+
         for (String url: urlsToSearchIn) {
             if(url.contains("details")){
                 switch (typeToSearchFor){
