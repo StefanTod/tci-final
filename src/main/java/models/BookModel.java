@@ -1,6 +1,7 @@
 package models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BookModel implements Book {
     private String genre;
@@ -81,5 +82,10 @@ public class BookModel implements Book {
         if(o == null || getClass() != o.getClass()) return false;
         BookModel bookModel = (BookModel) o;
         return name == (bookModel.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(genre, format, publisher, isbn, name, authors, year);
     }
 }

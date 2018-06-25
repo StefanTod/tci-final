@@ -6,18 +6,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.security.AlgorithmConstraints;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 import scraper.Scraper;
 
 @RunWith(JUnitParamsRunner.class)
@@ -145,7 +147,7 @@ public class CrawlerTest {
             Assert.fail(String.format("Unexpected JSoupException thrown. Exception message: %1$s", e.getMessage()));
         }
 
-        verify(scr).findSingleItem(properItemType, properItemName, (ArrayList) crawler.getAllUrls());
+        verify(scr).findSingleItem(properItemType, properItemName, (ArrayList<String>) crawler.getAllUrls());
     }
     //End of method Crawler.findSingleItem tests.
 
@@ -194,7 +196,7 @@ public class CrawlerTest {
 
         try {
             crawler.findAllItems(baseUrl);
-            verify(scr).findAllItems((ArrayList) crawler.getAllUrls());
+            verify(scr).findAllItems((ArrayList<String>) crawler.getAllUrls());
         } catch (Exception e) {
             Assert.fail(String.format("Unexpected %1$s thrown. Exception message: %2$s", e.getClass(), e.getMessage()));
         }
@@ -230,5 +232,26 @@ public class CrawlerTest {
         for (int i = 0 ; i < actualUrls.size() ; i++){
             assertThat(expectedUrlsList.contains(actualUrls.get(i)), is(true));
         }
+    }
+
+    @Test
+    public void testCrawlerOnCallingAScraperMethod() throws IOException, JSoupException {
+        Scraper scraper = mock(Scraper.class);
+
+        crawler.setScraper(scraper);
+        crawler.findAllItems(baseUrl);
+
+        verify(scraper).findAllItems(crawler.getAllUrls());
+    }
+
+    @Test
+    public void testCrawlerCallingScraperCallingItsMethods() throws IOException, JSoupException {
+        Scraper scraper = spy(new Scraper());
+        String url = "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=101";
+
+        crawler.setScraper(scraper);
+        crawler.findSingleItem("book","SomeBook",url);
+
+        verify(scraper, times(1)).findSingleBook("SomeBook", url);
     }
 }

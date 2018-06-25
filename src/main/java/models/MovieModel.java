@@ -1,6 +1,7 @@
 package models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MovieModel implements Movie {
     private String genre;
@@ -93,5 +94,10 @@ public class MovieModel implements Movie {
         if(o == null || getClass() != o.getClass()) return false;
         MovieModel movieModel = (MovieModel) o;
         return name == (movieModel.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(genre, format, year, director, writers, stars, name);
     }
 }

@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Objects;
+
 public class MusicModel implements Music {
     private String genre;
     private String format;
@@ -59,5 +61,10 @@ public class MusicModel implements Music {
         if(o == null || getClass() != o.getClass()) return false;
         MusicModel musicModel = (MusicModel) o;
         return name == (musicModel.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(genre, format, artist, name, year);
     }
 }
