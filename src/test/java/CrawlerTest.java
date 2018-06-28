@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.when;
+
 import scraper.Scraper;
 
 @RunWith(JUnitParamsRunner.class)
@@ -224,7 +226,12 @@ public class CrawlerTest {
                 "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=303",
                 "http://i371829.hera.fhict.nl/tci-test-site/details.php?id=304",
                 "http://i371829.hera.fhict.nl/tci-test-site/catalog.php"};
+        Algorithm algorithm = mock(Algorithm.class);
+        when(algorithm.getAllUrls()).thenReturn(Arrays.asList(expectedUrlsArray));
+        crawler.setAlgorithm(algorithm);
         List<String> actualUrls = crawler.triggerUrlsRetrieval(baseUrl);
+        verify(algorithm).crawlWebsite(baseUrl, 0);
+        verify(algorithm).getAllUrls();
         List<String> expectedUrlsList = Arrays.asList(expectedUrlsArray);
         assertThat(actualUrls.size(), is(equalTo(expectedUrlsList.size())));
         for (int i = 0 ; i < actualUrls.size() ; i++){

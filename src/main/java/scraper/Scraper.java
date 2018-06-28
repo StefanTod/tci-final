@@ -192,4 +192,6 @@ public class Scraper {
     private String[] trimmedStrings(String rawString){
         return rawString.trim().split("\\s*,\\s*");
     }
+
+
 }

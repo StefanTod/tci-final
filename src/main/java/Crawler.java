@@ -12,7 +12,6 @@ public class Crawler {
 
     public Crawler() {
         allUrls = new ArrayList<String>();
-        algorithm = new Algorithm();
         scraper = new Scraper();
     }
 
@@ -69,8 +68,8 @@ public class Crawler {
      * @return List<String>: list of urls
      */
     public List<String> triggerUrlsRetrieval(String baseUrl) throws IOException, JSoupException {
-        algorithm.crawlWebsite(baseUrl, 0);
-        allUrls = algorithm.getAllUrls();
+        this.algorithm.crawlWebsite(baseUrl, 0);
+        allUrls = this.algorithm.getAllUrls();
         return this.allUrls;
     }
 }

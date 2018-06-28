@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Statistics {
     private String strategyUsed;
     private int nrOfPagesExplored;
@@ -58,4 +60,17 @@ public class Statistics {
      * @return String: requestId
      */
     public int getRequestId() { return requestId; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Statistics that = (Statistics) o;
+        return requestId == that.requestId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(requestId);
+    }
 }
